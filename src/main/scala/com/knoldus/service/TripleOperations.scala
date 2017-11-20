@@ -73,5 +73,13 @@ class TripleOperations()(
       case None => None
     }
   }
+
+  def getTriplesAsJson(subject: String, predicate: String): String = {
+    val triples = fetchObject(subject, predicate)
+    triples match {
+      case Some(triple) => s"""{"subject":"${triple.entry}","predicate":"${triple.predicate}", "object":"${triple.value}"}"""
+      case None => """Not Found"""
+    }
+  }
 }
 

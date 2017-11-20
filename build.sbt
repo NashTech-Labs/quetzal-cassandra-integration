@@ -11,9 +11,12 @@ val cassandraConnector = "com.datastax.spark" %% "spark-cassandra-connector" % "
 val sparkSql = "org.apache.spark" % "spark-sql_2.11" % "2.2.0"
 val typeSafeConfig = "com.typesafe" % "config" % "1.3.2"
 val jena = "org.apache.jena" % "apache-jena-libs" % "3.5.0" pomOnly()
+val akkaHttpCore = "com.typesafe.akka" % "akka-http-core_2.11" % "10.0.5"
+val akkaHttpExperimental = "com.typesafe.akka" % "akka-http-experimental_2.11" % "2.4.11.1"
+val akkaHttpSpray = "com.typesafe.akka" % "akka-http-spray-json-experimental_2.11" % "2.4.11.1"
 
 val sourceDependencies = Seq(cassandraConnector, sparkSql, typeSafeConfig,
-  jena).map(_.exclude("org.slf4j", "slf4j-log4j12"))
+  jena, akkaHttpCore, akkaHttpExperimental, akkaHttpSpray).map(_.exclude("org.slf4j", "slf4j-log4j12"))
 
 //Test
 val scalaTest = "org.scalatest" %% "scalatest" % "3.0.4" % "test"
@@ -36,3 +39,4 @@ libraryDependencies += "com.fasterxml.jackson.module" % "jackson-module-scala_2.
 libraryDependencies ++= (sourceDependencies ++ testDependencies)
 dependencyOverrides ++= overridesDependencies
 parallelExecution in Test := false
+libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.11.8"
