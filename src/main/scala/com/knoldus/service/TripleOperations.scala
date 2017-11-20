@@ -78,7 +78,7 @@ class TripleOperations()(
     val triples = fetchObject(subject, predicate)
     triples match {
       case Some(triple) => s"""{"subject":"${triple.entry}","predicate":"${triple.predicate}", "object":"${triple.value}"}"""
-      case None => """Not Found"""
+      case None => """{"Message":"Not Found"}"""
     }
   }
 }

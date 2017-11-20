@@ -1,29 +1,30 @@
 package com.knoldus.route
 
+import akka.actor.ActorSystem
+import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.MediaTypes.`application/json`
 import akka.http.scaladsl.model.{HttpEntity, HttpResponse, StatusCodes}
-import akka.http.scaladsl.server.Route
-import akka.http.scaladsl.server.directives.MethodDirectives.get
-import akka.http.scaladsl.server.directives.PathDirectives._
-import akka.http.scaladsl.server.directives.RouteDirectives._
-import akka.http.scaladsl.server.directives.ParameterDirectives._
+import akka.http.scaladsl.server.{Directives, Route}
+import akka.stream.ActorMaterializer
 import com.google.inject.Inject
 import com.knoldus.helper.QueryHelper
 import com.knoldus.model.CassandraCluster
-import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import akka.stream.ActorMaterializer
 import com.knoldus.service.{DirectPredicateHashing, Hashing, PredicateHashing, TripleOperations}
 
+import scala.concurrent.ExecutionContextExecutor
 
-class TripleRoute @Inject()(tripleOperations: TripleOperations) {
+
+class TripleRoute @Inject()(tripleOperations: TripleOperations) extends Directives{
 
   def getObjectForTriples: Route = {
     path("triples") {
       get {
-        val response = tripleOperations.getTriplesAsJson("subject", "Property1")
-        complete(HttpResponse(StatusCodes.OK,
-          entity = HttpEntity(`application/json`, response)))
+        parameter('subject.as[String], 'predicate.as[String]) { (subject, predicate) =>
+          println(subject, predicate)
+          val response = tripleOperations.getTriplesAsJson(subject, predicate)
+          complete(HttpResponse(StatusCodes.OK,
+            entity = HttpEntity(`application/json`, response)))
+        }
       }
     }
   }
@@ -40,9 +41,9 @@ object TripleRoute {
     val tripleOperations = new TripleOperations()(cassandraCluster, predicateHashing, directPredicateHashing)
     val tripleRoute = new TripleRoute(tripleOperations)
 
-    implicit val system = ActorSystem("Triples")
-    implicit val executor = system.dispatcher
-    implicit val materializer = ActorMaterializer()
+    implicit val system: ActorSystem = ActorSystem("Triples")
+    implicit val executor: ExecutionContextExecutor = system.dispatcher
+    implicit val materializer: ActorMaterializer = ActorMaterializer()
     Http().bindAndHandle(tripleRoute.getObjectForTriples, "0.0.0.0", 8082)
 
   }

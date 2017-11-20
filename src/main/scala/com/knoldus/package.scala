@@ -29,7 +29,7 @@ package object knoldus {
   val sparkConf: SparkConf = new SparkConf()
     .setAppName(sparkAppName)
     .setMaster(sparkMaster)
-  lazy val sparkSession: SparkSession = SparkSession.builder().config(sparkConf).getOrCreate()
+  val sparkSession: SparkSession = SparkSession.builder().config(sparkConf).getOrCreate()
   val EmptyString = ""
   val ExceptionForPredicateTable = "Unable to Store triple in predicate_mapping Table"
   val DomainName = "DPH_DATA"
