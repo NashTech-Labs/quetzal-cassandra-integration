@@ -1,0 +1,21 @@
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen### Scala template
+*.class
+*.log
+
+# sbt specific
+.cache
+.history
+target/
+lib_managed/
+src_managed/
+project/target
+# Scala-IDE specific
+.scala_dependencies
+.worksheet
