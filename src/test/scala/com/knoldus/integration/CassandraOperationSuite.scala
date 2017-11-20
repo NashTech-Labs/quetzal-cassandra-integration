@@ -1,5 +1,6 @@
 package com.knoldus.integration
 
+import com.knoldus.TripleLoader
 import com.knoldus.model._
 import com.knoldus.service.{DirectPredicateHashing, Hashing, PredicateHashing, TripleOperations}
 
@@ -11,6 +12,7 @@ class CassandraOperationSuite  extends CassandraDatabaseCluster {
   lazy val predicateHashing = new PredicateHashing(cluster, hashing, queryHelper)
   lazy val directPredicateHashing = new DirectPredicateHashing(cluster, queryHelper)
   lazy val tripleOperations =  new TripleOperations()(cluster, predicateHashing, directPredicateHashing)
+  val tripleLoader =  new TripleLoader
   val triple = Triple("Entity", predicateInfo.predicate, "Object")
   val Domain = "Chemistry"
 
@@ -52,6 +54,12 @@ class CassandraOperationSuite  extends CassandraDatabaseCluster {
     val response = tripleOperations.fetchObject(triple.entry, triple.predicate)
     val expectedOutput = Some(triple)
     assert(response == expectedOutput)
+  }
+
+  "Triple loader" should "load Triple file to Cassandra" in {
+    val filePath = getClass.getResource("/elssie.nt").getPath
+    val result = tripleLoader.loadTripleFileToCassandra(filePath, tripleOperations)
+    assert(result)
   }
 
 }
